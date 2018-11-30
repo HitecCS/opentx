@@ -19,12 +19,26 @@
  */
 
 #include "opentx.h"
+#define SUI_BUILD 1
 
+#if defined(SUIBUILD)
+#define ADC_VREF_TYPE (0<<REFS0)|(0<<REFS1) // External AREF
+#else
 #define ADC_VREF_TYPE (1 << REFS0) // AVCC with external capacitor at AREF pin
+#endif
+
+#warning ADC_VREF_TYPE
+#define ADC_VREF_TYPE (0<<REFS0)|(0<<REFS1) // External AREF
 
 void adcInit()
 {
+
+#if defined(SUIBUILD)
+#warning SUI
+  ADMUX  &= ~((1<<REFS1) | (1<<REFS0)); 
+#else
   ADMUX  = ADC_VREF_TYPE;
+#endif
   ADCSRA = 0x85; // ADC enabled, pre-scaler division=32 (no interrupt, no auto-triggering)
 #if defined(CPUM2560)
   ADCSRB = (1 << MUX5);
@@ -39,6 +53,8 @@ void adcPrepareBandgap()
   ADCSRB &= ~(1<<MUX5);
   ADMUX = 0x03|ADC_VREF_TYPE; // Switch MUX to internal reference
 #elif defined(PCBMEGA2560)
+#warning PCBMEGA
+  ADMUX  &= ~((1<<REFS1) | (1<<REFS0)); 
 #else
   ADMUX = 0x1E|ADC_VREF_TYPE; // Switch MUX to internal reference
 #endif

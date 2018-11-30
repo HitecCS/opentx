@@ -21,6 +21,8 @@
 #include "opentx.h"         
 #include "i2c_driver.h"
 
+#define ClrBit(x,bit)			((x) &= ~(1<<bit))
+
 void boardInit()
 {
 #if !defined(SIMU)
@@ -42,6 +44,11 @@ void boardInit()
   DDRL = 0b00000000;  PORTL = 0b11111111; // 7:TRN_SW 6:EleDR_SW, 5:ESC, 4:MENU 3:Keyb_Left, 2:Keyb_Right, 1:Keyb_Up, 0:Keyb_Down
   
   adcInit();
+
+#warning "ADMUX"
+  ADMUX &= ~((1<<REFS1) | (1<<REFS0)); 
+  ClrBit(ADMUX,REFS0);
+  ClrBit(ADMUX,REFS1);
 
   /**** Set up timer/counter 0 ****/
   // TCNT0  10ms = 16MHz/1024/156(.25) periodic timer (100ms interval)

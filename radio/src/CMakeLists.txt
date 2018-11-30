@@ -584,7 +584,8 @@ if(NOT MSVC)
       )
   else()
     add_custom_target(flash
-      COMMAND avrdude -c usbasp -p ${AVRDUDE_MCU} -U flash:w:firmware.hex:i
+      #COMMAND avrdude -c usbasp -p ${AVRDUDE_MCU} -U flash:w:firmware.hex:i
+      COMMAND avrdude -c wiring -p atmega2560 -P /dev/ttyACM0 -U flash:w:firmware.hex:i -vv -D
       DEPENDS firmware
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
       )
